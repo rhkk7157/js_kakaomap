@@ -35,9 +35,42 @@
   const $map = get('#map');
   const mapContainer = new kakao.maps.Map($map, {
     center: new kakao.maps.LatLng(defaultPos.lat, defaultPos.lng),
-    level: 3
+    level: 3,
   })
-  const init = () => {}
+
+  const createMarkerImage = () => {
+    let markerImageSrc = 'assets/marker.png'
+    let imageSize = new kakao.maps.Size(30, 46)
+    return new kakao.maps.MarkerImage(markerImageSrc, imageSize)
+  }
+
+  const createMarker = (lat, lng) => {
+    const marker = new kakao.maps.Marker({
+      map: mapContainer,
+      position: new kakao.maps.LatLng(lat, lng),
+      image: createMarkerImage(),
+    });
+    return marker;
+  }
+  
+
+  const createShopElement = () => {
+    shops.map((shop) => {
+      const { lat, lng } = shop;
+      const marker = createMarker(lat, lng);
+      const infowindow = new kakao.maps.InfoWindow({
+        content: `<div style="width:150px;text-align:center;padding:6px 2px;">
+                    <a href="https://place.map.kakao.com/${shop.id}" target="_blank">${shop.name}</a>
+                  </div>`,
+      });
+      infowindow.open(mapContainer, marker);
+    });
+    
+  }
+
+  const init = () => {
+    createShopElement();
+  }
 
   init()
 })()
